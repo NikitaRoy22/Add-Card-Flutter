@@ -21,20 +21,22 @@ class _MyAppState extends State<MyApp> {
 
   final _ccValidator = CreditCardValidator();
   bool validateCreditCardInfo() {
-  var ccNumResults = _ccValidator.validateCCNum(cardNumberController.text);
-  var expDateResults = _ccValidator.validateExpDate(dateController.text);
-  var cvvResults = _ccValidator.validateCVV(securityCodeController.text, ccNumResults.ccType);
-  if(ccNumResults.isPotentiallyValid){
-    setState(() {
-      errorText = "Please enter a valid card number";
-    });
-  }
-  else if(errorText!=null){
-    setState(() {
-      errorText = null;
-    });
-  }
-  return ccNumResults.isPotentiallyValid && expDateResults.isPotentiallyValid && cvvResults.isPotentiallyValid;
+    var ccNumResults = _ccValidator.validateCCNum(cardNumberController.text);
+    var expDateResults = _ccValidator.validateExpDate(dateController.text);
+    var cvvResults = _ccValidator.validateCVV(
+        securityCodeController.text, ccNumResults.ccType);
+    if (ccNumResults.isPotentiallyValid) {
+      setState(() {
+        errorText = "Please enter a valid card number";
+      });
+    } else if (errorText != null) {
+      setState(() {
+        errorText = null;
+      });
+    }
+    return ccNumResults.isPotentiallyValid &&
+        expDateResults.isPotentiallyValid &&
+        cvvResults.isPotentiallyValid;
   }
 
   String? errorText;
@@ -47,7 +49,9 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          leading: BackButton(color: Color(0xFF223263),),
+          leading: BackButton(
+            color: Color(0xFF223263),
+          ),
           backgroundColor: Colors.white,
           title: Text(
             'Add Card',
@@ -63,15 +67,25 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              if(errorText!=null)
-                Row(children: [
-                  Icon(Icons.error, color: Color(0xFFE78787),),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: SizedBox(width: 20,),
-                  ),
-                  Text(errorText!, style: TextStyle(color: Color(0xFFE78787)),)
-                ],),
+              if (errorText != null)
+                Row(
+                  children: [
+                    Icon(
+                      Icons.error,
+                      color: Color(0xFFE78787),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: SizedBox(
+                        width: 20,
+                      ),
+                    ),
+                    Text(
+                      errorText!,
+                      style: TextStyle(color: Color(0xFFE78787)),
+                    )
+                  ],
+                ),
               Container(
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -149,36 +163,40 @@ class _MyAppState extends State<MyApp> {
                           top: 6.0,
                           right: 8.0,
                         ),
-                        child: Builder(
-                          builder: (context) {
-                            return TextField(
-                              controller: dateController,
-                              onTap: ()async{
-                                final date = await showDatePicker(context: context, initialDate: expdate, firstDate: DateTime.now(), lastDate: DateTime(2100), initialDatePickerMode: DatePickerMode.year);
-                                if(date != null) {
-                                  expdate = date;
-                                  dateController.text = DateFormat('MM/yy').format(date);
-                                }
-                              },
-                              readOnly: true,
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                              decoration: const InputDecoration(
-                                isDense: true,
-                                hintStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFFA9A9A9)),
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Color(0xFFD3D3D3))),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Color(0xFFE78787))),
-                                border: OutlineInputBorder(),
-                                hintText: 'MM/YY',
-                              ),
-                            );
-                          }
-                        ),
+                        child: Builder(builder: (context) {
+                          return TextField(
+                            controller: dateController,
+                            onTap: () async {
+                              final date = await showDatePicker(
+                                  context: context,
+                                  initialDate: expdate,
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime(2100),
+                                  initialDatePickerMode: DatePickerMode.year);
+                              if (date != null) {
+                                expdate = date;
+                                dateController.text =
+                                    DateFormat('MM/yy').format(date);
+                              }
+                            },
+                            readOnly: true,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                            decoration: const InputDecoration(
+                              isDense: true,
+                              hintStyle: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFA9A9A9)),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Color(0xFFD3D3D3))),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Color(0xFFE78787))),
+                              border: OutlineInputBorder(),
+                              hintText: 'MM/YY',
+                            ),
+                          );
+                        }),
                       ),
                     ),
                     Expanded(
@@ -247,8 +265,9 @@ class _MyAppState extends State<MyApp> {
                       left: 8.0, right: 8.0, bottom: 18.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      if(validateCreditCardInfo())
-                        print("Card Holder Name: ${cardHolderController.text}\nCard Number: ${cardNumberController.text}\nExpiration Date: ${dateController.text}");
+                      if (validateCreditCardInfo())
+                        print(
+                            "Card Holder Name: ${cardHolderController.text}\nCard Number: ${cardNumberController.text}\nExpiration Date: ${dateController.text}");
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
