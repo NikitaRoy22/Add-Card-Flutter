@@ -1,3 +1,4 @@
+import 'package:add_card_flutter/utils.dart';
 import 'package:credit_card_validator/credit_card_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,24 +20,27 @@ class _MyAppState extends State<MyApp> {
 
   var expdate = DateTime.now();
 
-  final _ccValidator = CreditCardValidator();
-  bool validateCreditCardInfo() {
-    var ccNumResults = _ccValidator.validateCCNum(cardNumberController.text);
-    var expDateResults = _ccValidator.validateExpDate(dateController.text);
-    var cvvResults = _ccValidator.validateCVV(
-        securityCodeController.text, ccNumResults.ccType);
-    if (ccNumResults.isPotentiallyValid) {
+  validateCard() {
+    if (cardNumberController.text.isEmpty ||
+        dateController.text.isEmpty ||
+        securityCodeController.text.isEmpty ||
+        cardHolderController.text.isEmpty) {
       setState(() {
-        errorText = "Please enter a valid card number";
+        errorText = "Please fill all fields!";
       });
-    } else if (errorText != null) {
-      setState(() {
-        errorText = null;
-      });
+    } else {
+      if (Utils.validateCardNumber(cardNumberController.text)) {
+        print(
+            "Card Holder Name: ${cardHolderController.text}\nCard Number: ${cardNumberController.text}\nExpiration Date: ${dateController.text}");
+        setState(() {
+          errorText = null;
+        });
+      } else {
+        setState(() {
+          errorText = "Please enter a valid card number!";
+        });
+      }
     }
-    return ccNumResults.isPotentiallyValid &&
-        expDateResults.isPotentiallyValid &&
-        cvvResults.isPotentiallyValid;
   }
 
   String? errorText;
@@ -67,25 +71,25 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              if (errorText != null)
-                Row(
-                  children: [
-                    Icon(
-                      Icons.error,
-                      color: Color(0xFFE78787),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: SizedBox(
-                        width: 20,
+              errorText != null
+                  ? Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(
+                        children: [
+                          Icon(
+                            Icons.error,
+                            color: Color(0xFFE78787),
+                          ),
+                          SizedBox(
+                            width: 20),
+                          Text(
+                            errorText!,
+                            style: TextStyle(color: Color(0xFFE78787)),
+                          )
+                        ],
                       ),
-                    ),
-                    Text(
-                      errorText!,
-                      style: TextStyle(color: Color(0xFFE78787)),
-                    )
-                  ],
-                ),
+                  )
+                  : Container(),
               Container(
                 child: Padding(
                   padding: const EdgeInsets.only(
@@ -209,6 +213,7 @@ class _MyAppState extends State<MyApp> {
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
                             isDense: true,
+                            counterText: "",
                             hintStyle: TextStyle(color: Color(0xFFA9A9A9)),
                             enabledBorder: OutlineInputBorder(
                                 borderSide:
@@ -228,7 +233,7 @@ class _MyAppState extends State<MyApp> {
               Container(
                 child: Padding(
                   padding: const EdgeInsets.only(
-                      top: 2.0, left: 8.0, right: 8.0, bottom: 8.0),
+                      top: 16.0, left: 8.0, right: 8.0, bottom: 8.0),
                   child: const Text(
                     'Card Holder',
                     style: TextStyle(
@@ -265,9 +270,7 @@ class _MyAppState extends State<MyApp> {
                       left: 8.0, right: 8.0, bottom: 18.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      if (validateCreditCardInfo())
-                        print(
-                            "Card Holder Name: ${cardHolderController.text}\nCard Number: ${cardNumberController.text}\nExpiration Date: ${dateController.text}");
+                      validateCard();
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(
